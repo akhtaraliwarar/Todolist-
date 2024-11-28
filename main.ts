@@ -1,85 +1,75 @@
 import inquirer from "inquirer";
-import Choices from "inquirer/lib/objects/choices.js";
- 
-/// inquirer
-// array
-// function
-// opreator 
 
-const todos :string[] =['alone', "king"];
 
-async function createtodos(todos:string[]){
-  do{
-    let ans = await inquirer.prompt({
-  
-      type:"list",
-      name :"select",
-      message :"select opreater",
-      choices:["Add" , "update", "view","delete"],
-      
-    });
-    if(ans.select == "Add"){
-   let addtodo = await inquirer.prompt({
-      type: "input",
+let todos: string[] = [];
+let condition = true;
+
+while (condition) {
+  let ans = await inquirer.prompt([
+    {
+      name: "select",
+      type: "list",
+      message: "Select an operation",
+      choices: ["Add", "update", "view", "delete", "exit"],
+    },
+  ]);
+
+  if (ans.select === "Add") {
+    let addTodo = await inquirer.prompt({
       name: "todo",
-      message :"add item in list",
-      
-   });
-   todos.push(addtodo.todo);
-   todos.forEach(todo => console.log(todo));
-   
-   // console.log(todos);
-   
-    }
-    
-    if(ans.select == "update"){
-      let updatetodo = await inquirer.prompt({
-  type : "list",
-  name : " todo",
-  message: " update  list item again",
-  choices :todos.map(item => item),
-
-  
-      });
-    
-      let addtodo = await inquirer.prompt({
-      type : "input",
-      name :"todo",
-      message : "add item in the list",
-  
-      });
-      let newtodo = todos.filter(val => val !== updatetodo.todo)
-     todos =[...newtodo,addtodo.todo];
-   console.log(todos);
-    }
-    if (ans.select == "view"){
-      console.log("##### todo list ########");
-      
-      console.log(todos);
-      
-  console.log("*******************");
-  
-    }
-   if(ans.select == "delete"){
-    let deletetodo = await inquirer.prompt({
-      type : "list",
-      name : " todo",
-      message: " remove list item",
-      choices:todos.map(items => items) 
-  
-          });
-          let newtodo = todos.filter(val =>val !== deletetodo
-            .todo)
-          todos= [...newtodo];
-           console.log(todos);
+      type: "input",
+      message: "Add items in the list",
+      validate: function (input) {
+        if (input.trim() == "") {
+          return "Please enter a non-empty item.";
         }
-  }while(true)
-  
+        return true;
+      },
+    });
+    if (addTodo.todo.trim() !== "") {
+      todos.push(addTodo.todo);
+      todos.forEach((todo) => console.log(todo));
+    }
+  }
 
-} 
-createtodos(todos);
+  if (ans.select === "update") {
+    let updateTodo = await inquirer.prompt({
+      name: "todo",
+      type: "list",
+      message: "Update items in the list",
+      choices: todos.map((item) => item),
+    });
+    let addTodo = await inquirer.prompt({
+      name: "todo",
+      type: "input",
+      message: "Add items in the list",
+    });
+    let newTodo = todos.filter((val) => val !== updateTodo.todo);
+    todos = [...newTodo, addTodo.todo];
+    todos.forEach((todo) => console.log(todo));
+  }
+
+  if (ans.select === "view") {
+    console.log("***** TO-DO LIST *****");
+    todos.forEach((todo) => console.log(todo));
+  }
+
+  if (ans.select === "delete") {
+    let deleteTodo = await inquirer.prompt({
+      name: "todo",
+      type: "list",
+      message: "Select item to delete",
+      choices: todos.map((item) => item),
+    });
+    let newTodo = todos.filter((val) => val !== deleteTodo.todo);
+    todos = [...newTodo];
+    todos.forEach((todo) => console.log(todo));
+  }
+
+  if (ans.select === "exit") {
+    console.log("Exiting program...");
+    condition = false;
+  }
+}
 
 
-
-
-/////////////////////////////
